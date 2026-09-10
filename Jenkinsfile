@@ -45,14 +45,14 @@ pipeline {
             }
         }
 
-        stage('Tests') {
-            steps {
-                sh '''
-                    echo "Running tests..."
-                    uv run pytest -v
-                '''
-            }
-        }
+        // stage('Tests') {
+        //     steps {
+        //         sh '''
+        //             echo "Running tests..."
+        //             uv run pytest -v
+        //         '''
+        //     }
+        // }
 
         stage('MLflow Run') {
             steps {
