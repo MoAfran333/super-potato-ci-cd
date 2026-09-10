@@ -100,6 +100,31 @@ pipeline {
             }
         }
 
+        stage('Deploy Website') {
+            steps {
+                sh '''
+                    echo "Deploying index.html..."
+
+                    cp index.html /var/www/html/index.html
+
+                    echo "Website deployed successfully."
+                '''
+            }
+        }
+
+        stage('Archive Artifacts') {
+            steps {
+                archiveArtifacts artifacts: '''
+                    mlruns/**,
+                    mlflow.db,
+                    pyproject.toml,
+                    uv.lock
+                ''',
+                allowEmptyArchive: true,
+                fingerprint: true
+            }
+        }
+
         stage('Archive Artifacts') {
             steps {
                 archiveArtifacts artifacts: '''
