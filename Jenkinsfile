@@ -4,6 +4,7 @@ pipeline {
     environment {
         PYTHONUNBUFFERED = '1'
         UV_PROJECT_ENVIRONMENT = '.venv'
+        PATH = "/var/lib/jenkins/.local/bin:${env.PATH}"
     }
 
     stages {
