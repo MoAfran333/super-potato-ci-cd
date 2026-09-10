@@ -1,11 +1,10 @@
+```groovy
 pipeline {
     agent any
 
     environment {
         PYTHONUNBUFFERED = '1'
         UV_PROJECT_ENVIRONMENT = '.venv'
-        IMAGE_NAME = 'mlflow-test'
-        IMAGE_TAG = "${BUILD_NUMBER}"
     }
 
     stages {
@@ -81,47 +80,23 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
-            when {
-                expression {
-                    fileExists('Dockerfile')
-                }
-            }
-
-            steps {
-                sh '''
-                    echo "Building Docker image..."
-
-                    docker build \
-                        -t ${IMAGE_NAME}:${IMAGE_TAG} \
-                        -t ${IMAGE_NAME}:latest \
-                        .
-                '''
-            }
-        }
-
         stage('Deploy Website') {
             steps {
                 sh '''
-                    echo "Deploying index.html..."
+                    echo "Current directory:"
+                    pwd
 
+                    echo "Files:"
+                    ls -la
+
+                    echo "Copying index.html..."
                     cp index.html /var/www/html/index.html
 
-                    echo "Website deployed successfully."
-                '''
-            }
-        }
+                    echo "Web directory:"
+                    ls -la /var/www/html/
 
-        stage('Archive Artifacts') {
-            steps {
-                archiveArtifacts artifacts: '''
-                    mlruns/**,
-                    mlflow.db,
-                    pyproject.toml,
-                    uv.lock
-                ''',
-                allowEmptyArchive: true,
-                fingerprint: true
+                    echo "Deployment complete."
+                '''
             }
         }
 
@@ -157,4 +132,4 @@ pipeline {
         }
     }
 }
-
+```
