@@ -1,0 +1,46 @@
+import mlflow
+import mlflow.sklearn as sklearn_mlflow
+from sklearn import datasets
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
+from sklearn.model_selection import train_test_split
+
+mlflow.set_experiment("MLFlow-Test")
+
+
+# Load the Iris dataset
+X, y = datasets.load_iris(return_X_y=True)
+
+# Split the data into training and test sets
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Define the model hyperparameters
+params = {
+    "solver": "lbfgs",
+    "max_iter": 1000,
+    "random_state": 8888,
+}
+
+sklearn_mlflow.autolog()
+
+lr = LogisticRegression(**params)
+lr.fit(X_train, y_train)
+
+# Make predictions
+y_pred = lr.predict(X_test)
+
+# Calculate evaluation metrics
+accuracy = accuracy_score(y_test, y_pred)
+precision = precision_score(y_test, y_pred, average="weighted")
+recall = recall_score(y_test, y_pred, average="weighted")
+f1 = f1_score(y_test, y_pred, average="weighted")
+
+# Display results
+print("Logistic Regression Results")
+print("---------------------------")
+print(f"Accuracy : {accuracy:.4f}")
+print(f"Precision: {precision:.4f}")
+print(f"Recall   : {recall:.4f}")
+print(f"F1 Score : {f1:.4f}")
