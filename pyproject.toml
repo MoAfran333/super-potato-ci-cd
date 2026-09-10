@@ -7,4 +7,11 @@ authors = [
     { name = "Mo Afran", email = "moafran123@gmail.com" }
 ]
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "mlflow>=3.16.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
