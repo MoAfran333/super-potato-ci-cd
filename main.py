@@ -1,6 +1,3 @@
-
-from pathlib import Path
-
 import mlflow
 import mlflow.sklearn as sklearn_mlflow
 from sklearn import datasets
@@ -49,8 +46,8 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 params: dict[str, str | int] = {
     "solver": "lbfgs",
-    "max_iter": 1000,
-    "random_state": 8888,
+    "max_iter": 20,
+    "random_state": 0,
 }
 
 
