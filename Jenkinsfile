@@ -1,3 +1,4 @@
+
 pipeline {
     agent any
 
@@ -18,17 +19,36 @@ pipeline {
         stage('Environment') {
             steps {
                 sh '''
+                    set -eu
+
+                    echo "===== Environment ====="
+
+                    echo "Current user:"
+                    whoami
+
+                    echo "Current directory:"
+                    pwd
+
                     echo "Python version:"
                     python3 --version
+
+                    echo "Python location:"
+                    which python3
 
                     echo "uv version:"
                     uv --version
 
-                    echo "Check where uv is:"
+                    echo "uv location:"
                     which uv
 
-                    echo "Check Python3 location"
-                    which python3
+                    echo "Python executable:"
+                    python3 -c "import sys; print(sys.executable)"
+
+                    echo "Python home:"
+                    python3 -c "import os; print(os.path.expanduser('~'))"
+
+                    echo "HOME:"
+                    echo "$HOME"
 
                     echo "Installing dependencies..."
                     uv sync --frozen
@@ -39,6 +59,8 @@ pipeline {
         stage('Lint / Basic Validation') {
             steps {
                 sh '''
+                    set -eu
+
                     echo "Checking Python files..."
 
                     uv run python -m compileall \
@@ -51,18 +73,11 @@ pipeline {
             }
         }
 
-        // stage('Tests') {
-        //     steps {
-        //         sh '''
-        //             echo "Running tests..."
-        //             uv run pytest -v
-        //         '''
-        //     }
-        // }
-
         stage('MLflow Run') {
             steps {
                 sh '''
+                    set -eu
+
                     echo "Running MLflow experiment..."
 
                     uv run python main.py
@@ -73,6 +88,8 @@ pipeline {
         stage('Verify MLflow Artifacts') {
             steps {
                 sh '''
+                    set -eu
+
                     echo "Checking MLflow artifacts..."
 
                     test -d mlruns || {
@@ -89,6 +106,8 @@ pipeline {
         stage('Deploy Website') {
             steps {
                 sh '''
+                    set -eu
+
                     echo "Current directory:"
                     pwd
 
@@ -96,6 +115,12 @@ pipeline {
                     ls -la
 
                     echo "Copying index.html..."
+
+                    test -f index.html || {
+                        echo "ERROR: index.html not found."
+                        exit 1
+                    }
+
                     cp index.html /var/www/html/index.html
 
                     echo "Web directory:"
