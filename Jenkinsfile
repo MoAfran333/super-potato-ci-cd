@@ -24,6 +24,12 @@ pipeline {
                     echo "uv version:"
                     uv --version
 
+                    Check where uv is:
+                    which uv
+
+                    Check Python3 location
+                    which python3
+
                     echo "Installing dependencies..."
                     uv sync --frozen
                 '''

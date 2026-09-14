@@ -70,10 +70,10 @@ for model_name, model in models.items():
         y_pred = model.predict(X_test)
 
         # Metrics
-        accuracy = accuracy_score(y_test, y_pred)
-        precision = precision_score(y_test, y_pred, average="weighted")
-        recall = recall_score(y_test, y_pred, average="weighted")
-        f1 = f1_score(y_test, y_pred, average="weighted")
+        accuracy = float(accuracy_score(y_test, y_pred))
+        precision = float(precision_score(y_test, y_pred, average="weighted"))
+        recall = float(recall_score(y_test, y_pred, average="weighted"))
+        f1 = float(f1_score(y_test, y_pred, average="weighted"))
 
         # Explicitly log metrics
         mlflow.log_metric("test_accuracy", accuracy)

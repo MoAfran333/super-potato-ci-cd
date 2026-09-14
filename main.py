@@ -17,8 +17,8 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 # Define the model hyperparameters
-params = {
-    "solver": "lbfgs",
+params: dict[str, str | int] = {
+    "solver": 'lbfgs',
     "max_iter": 1000,
     "random_state": 8888,
 }
@@ -32,10 +32,10 @@ lr.fit(X_train, y_train)
 y_pred = lr.predict(X_test)
 
 # Calculate evaluation metrics
-accuracy = accuracy_score(y_test, y_pred)
-precision = precision_score(y_test, y_pred, average="weighted")
-recall = recall_score(y_test, y_pred, average="weighted")
-f1 = f1_score(y_test, y_pred, average="weighted")
+accuracy = float(accuracy_score(y_test, y_pred))
+precision = float(precision_score(y_test, y_pred, average="weighted"))
+recall = float(recall_score(y_test, y_pred, average="weighted"))
+f1 = float(f1_score(y_test, y_pred, average="weighted"))
 
 # Display results
 print("Logistic Regression Results")
