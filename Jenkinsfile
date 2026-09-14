@@ -73,10 +73,10 @@ pipeline {
             }
         }
 
-        stage('MLflow Diagnostics') {
+       stage('MLflow Diagnostics') {
             steps {
                 sh '''
-                    set -eu
+                    set -e
 
                     echo "===== Jenkins identity ====="
                     whoami
@@ -84,7 +84,7 @@ pipeline {
 
                     echo "===== Environment ====="
                     echo "HOME=$HOME"
-                    echo "MLFLOW_TRACKING_URI=$MLFLOW_TRACKING_URI"
+                    echo "MLFLOW_TRACKING_URI=${MLFLOW_TRACKING_URI:-<not set>}"
 
                     echo "===== Python ====="
                     which python3
@@ -95,14 +95,19 @@ pipeline {
                     uv run python -c "import mlflow; print('Version:', mlflow.__version__)"
                     uv run python -c "import mlflow; print('Tracking URI:', mlflow.get_tracking_uri())"
 
-                    echo "===== Search project for MLflow configuration ====="
+                    echo "===== MLflow environment variables ====="
+                    env | grep -i '^MLFLOW' || true
+
+                    echo "===== Project configuration ====="
                     grep -RIn \
                         --exclude-dir=.git \
                         --exclude-dir=.venv \
                         -E 'MLFLOW_TRACKING_URI|set_tracking_uri|sqlite:///|mlflow.db|mlruns' . || true
 
-                    echo "===== Check MLflow-related environment ====="
-                    env | grep -i mlflow || true
+                    echo "===== Jenkins home MLflow-related files ====="
+                    find "$HOME" -maxdepth 3 \
+                        \\( -iname '*mlflow*' -o -iname '.env' \\) \
+                        -print 2>/dev/null || true
                 '''
             }
         }
