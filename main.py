@@ -3,7 +3,6 @@ from pathlib import Path
 
 import mlflow
 import mlflow.sklearn as sklearn_mlflow
-
 from sklearn import datasets
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
@@ -14,16 +13,11 @@ from sklearn.metrics import (
 )
 from sklearn.model_selection import train_test_split
 
-
 # --------------------------------------------------
 # MLflow configuration
 # --------------------------------------------------
 
-# Store MLflow results in the Jenkins workspace.
-tracking_dir = Path.cwd() / "mlruns"
-tracking_dir.mkdir(parents=True, exist_ok=True)
-
-mlflow.set_tracking_uri(tracking_dir.as_uri())
+mlflow.set_tracking_uri("sqlite:///mlflow.db")
 mlflow.set_experiment("MLFlow-Test")
 
 # Enable automatic logging of parameters, metrics, and model.
@@ -118,5 +112,4 @@ print(f"Precision: {precision:.4f}")
 print(f"Recall   : {recall:.4f}")
 print(f"F1 Score : {f1:.4f}")
 
-print(f"MLflow tracking directory: {tracking_dir}")
 print(f"MLflow tracking URI: {mlflow.get_tracking_uri()}")
