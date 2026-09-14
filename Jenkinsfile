@@ -73,6 +73,40 @@ pipeline {
             }
         }
 
+        stage('MLflow Diagnostics') {
+            steps {
+                sh '''
+                    set -eu
+
+                    echo "===== Jenkins identity ====="
+                    whoami
+                    id
+
+                    echo "===== Environment ====="
+                    echo "HOME=$HOME"
+                    echo "MLFLOW_TRACKING_URI=$MLFLOW_TRACKING_URI"
+
+                    echo "===== Python ====="
+                    which python3
+                    python3 --version
+                    uv run python -c "import sys; print(sys.executable)"
+
+                    echo "===== MLflow ====="
+                    uv run python -c "import mlflow; print('Version:', mlflow.__version__)"
+                    uv run python -c "import mlflow; print('Tracking URI:', mlflow.get_tracking_uri())"
+
+                    echo "===== Search project for MLflow configuration ====="
+                    grep -RIn \
+                        --exclude-dir=.git \
+                        --exclude-dir=.venv \
+                        -E 'MLFLOW_TRACKING_URI|set_tracking_uri|sqlite:///|mlflow.db|mlruns' . || true
+
+                    echo "===== Check MLflow-related environment ====="
+                    env | grep -i mlflow || true
+                '''
+            }
+        }
+
         stage('MLflow Run') {
             steps {
                 sh '''
