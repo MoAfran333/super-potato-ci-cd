@@ -78,9 +78,40 @@ pipeline {
                 sh '''
                     set -eu
 
-                    echo "Running MLflow experiment..."
+                    echo "===== MLflow Environment ====="
+
+                    echo "User:"
+                    whoami
+
+                    echo "HOME:"
+                    echo "$HOME"
+
+                    echo "Python:"
+                    which python3
+                    python3 --version
+
+                    echo "uv:"
+                    which uv
+                    uv --version
+
+                    echo "uv Python:"
+                    uv run python -c "import sys; print(sys.executable)"
+
+                    echo "Python home:"
+                    uv run python -c "import site; print(site.getsitepackages())"
+
+                    echo "MLflow:"
+                    uv run python -c "import mlflow; print(mlflow.__version__)"
+                    uv run python -c "import mlflow; print('Tracking URI:', mlflow.get_tracking_uri())"
+
+                    echo "===== Running experiment ====="
 
                     uv run python main.py
+
+                    echo "===== Workspace after MLflow ====="
+
+                    pwd
+                    find . -maxdepth 3 -type d | sort
                 '''
             }
         }
